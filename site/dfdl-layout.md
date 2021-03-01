@@ -65,6 +65,8 @@ These conventions are actually usable for regular XML-schema projects, that is,
 they're not really DFDL-specific conventions. They're general conventions for
 organizing projects so as to achieve the above benefits.
 
+### Standard File Tree
+
 Let's assume the DFDL schema contains two files named rfmt.dfdl.xsd, and
 format.dfdl.xsd, and that our format is named RFormat (rfmt) with an
 organization web identity of example.com.
