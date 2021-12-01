@@ -13,48 +13,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Publish Daffodil Site
+name: CI
 
-on: [push]
+on:
+  push:
+  pull_request:
+    types: [opened, synchronize, reopened]
 
 jobs:
   test:
-    name: Publish Site
-    runs-on: ubuntu-latest
+    name: Test & Publish
     strategy:
       fail-fast: false
-    steps:
+    runs-on: ubuntu-latest
+    container:
+      image: jekyll/jekyll:4.2.0
 
+    steps:
       - name: Checkout Repository
         uses: actions/checkout@v1.0.0
 
-      - name: Install Ruby
-        uses: actions/setup-ruby@v1
-        with:
-          ruby-version: '2.6'
+      - name: Build Site
+        env:
+          JEKYLL_ROOTLESS: true
+        run: /usr/jekyll/bin/entrypoint jekyll build --source site
 
-      - name: Install Python
-        uses: actions/setup-python@v1
-        with:
-          python-version: '3.5'
+      - name: Info
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
 
-      - name: Install Dependencies
-        run: |
-          sudo apt-get install graphviz
-          bundle install
-          python -m pip install --upgrade pip
-          pip install blockdiag
-          pip install seqdiag
-          pip install actdiag
-          pip install nwdiag
-
-      - name: Build 
-        run: |
-          jekyll clean --source site
-          jekyll build --source site
-
-      - name: Publish
-        if: ${{ github.repository == 'apache/daffodil-site' && github.ref == 'refs/heads/main' }}
+      - name: Publish Site
+        if: ${{ github.repository == 'apache/stevedlawrence' && github.ref == 'refs/heads/main' }}
         run: |
           git checkout asf-site
           rm -rf content
